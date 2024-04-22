@@ -47,7 +47,7 @@ class _QRReaderPageState extends ConsumerState<QRReaderPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Native Device Orientation With QR Reader'),
+          title: const Text('RotatedBox with QR Reader'),
         ),
         body: NativeDeviceOrientationReader(
           builder: (context) {
@@ -79,9 +79,9 @@ class _QRReaderPageState extends ConsumerState<QRReaderPage> {
                   Expanded(
                     child: MobileScanner(
                       controller: cameraController,
-                      onScannerStarted: (args) {
-                        qrNotifier.setMobileScannerArguments(args!);
-                      },
+                      // onScannerStarted: (args) {
+                      //   qrNotifier.setMobileScannerArguments(args!);
+                      // },
                       onDetect: (capture) {
                         final barcode = capture.barcodes.first;
                         final qrCodeValue = barcode.rawValue;
@@ -102,12 +102,14 @@ class _QRReaderPageState extends ConsumerState<QRReaderPage> {
                       errorBuilder: (context, error, child) {
                         cameraController.stop();
                         cameraController.start();
-                        showModalBottomSheet<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return _ModalBottomSheet();
-                          },
-                        );
+                        if (!cameraController.isStarting) {
+                          showModalBottomSheet<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return _ModalBottomSheet();
+                            },
+                          );
+                        }
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Center(
@@ -121,6 +123,20 @@ class _QRReaderPageState extends ConsumerState<QRReaderPage> {
                           ),
                         );
                       },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return _ModalBottomSheet();
+                          },
+                        );
+                      },
+                      child: const Text('Show Modal Bottom Sheet'),
                     ),
                   ),
                 ],
